@@ -447,6 +447,42 @@ const Index = () => {
         </div>
       </section>
 
+      {/* FINAL CTA */}
+      <section className="py-20 sm:py-28 bg-card">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
+            Still reading? Your trip is closer than you think.
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base mb-8 leading-relaxed max-w-lg mx-auto">
+            Every day you wait is another day you're not prepared. The intel is ready when you are.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+            <Button
+              size="lg"
+              className="font-mono tracking-wider text-sm"
+              asChild
+            >
+              <a href="#cities" onClick={(e) => { e.preventDefault(); document.getElementById("cities")?.scrollIntoView({ behavior: "smooth" }); }}>
+                GET YOUR CITY FILE — $17
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="font-mono tracking-wider text-sm border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              asChild
+            >
+              <a href="https://megustacomco.gumroad.com" target="_blank" rel="noopener noreferrer">
+                EXPLORER BUNDLE — $37
+              </a>
+            </Button>
+          </div>
+          <p className="text-muted-foreground text-xs font-mono">
+            Instant download. Read it on the plane.
+          </p>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer className="border-t border-border py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
