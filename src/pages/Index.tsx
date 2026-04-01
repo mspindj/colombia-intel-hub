@@ -191,23 +191,41 @@ const Index = () => {
 
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroBg})` }}
-        />
+        {heroBgs.map((bg, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+            style={{
+              backgroundImage: `url(${bg})`,
+              opacity: bgIndex === i ? 1 : 0,
+            }}
+          />
+        ))}
         <div className="absolute inset-0 bg-background/85" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center py-32">
+          <p className="font-mono text-xs tracking-[0.3em] uppercase text-primary/60 mb-4">
+            For travelers who refuse to wing it
+          </p>
           <p className="font-mono text-xs sm:text-sm text-primary tracking-[0.3em] mb-6 uppercase">
             Classified // First-Timer Protocol
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-            Your first 72 hours{" "}
-            <span className="text-primary">will make or break</span> your trip
-            to Colombia.
+            Tourists get scammed, overpay, and waste their first 3 days.{" "}
+            <span className="text-primary">You won't.</span>
           </h1>
-          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Not a tourist guide. This is tactical local intelligence — the cheat
-            codes that locals don't post on TripAdvisor.
+          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
+            Every city has cheat codes the locals don't post online. We put them
+            in a 72-hour tactical briefing — so you land prepared, not panicked.
+          </p>
+          <div className="flex items-center justify-center gap-4 font-mono text-xs text-muted-foreground mb-4">
+            <span><span className="text-foreground font-bold">2,847+</span> briefed</span>
+            <span className="text-border">|</span>
+            <span>⭐ <span className="text-foreground font-bold">4.9</span> avg rating</span>
+            <span className="text-border">|</span>
+            <span><span className="text-foreground font-bold">3</span> cities covered</span>
+          </div>
+          <p className="italic text-sm text-muted-foreground mb-8">
+            Your flight is booked. The clock started.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
             <Button
@@ -215,7 +233,7 @@ const Index = () => {
               className="font-mono tracking-wider text-sm"
               onClick={scrollToCity}
             >
-              CHOOSE YOUR CITY
+              GET YOUR CITY BRIEFING — $17
             </Button>
             <Button
               variant="outline"
@@ -228,12 +246,12 @@ const Index = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                EXPLORER BUNDLE — $37
+                ALL 3 CITIES — $37 (SAVE 27%)
               </a>
             </Button>
           </div>
           <p className="text-muted-foreground text-xs font-mono">
-            Instant PDF download. No fluff. No affiliate spam.
+            Takes 45 minutes to read. Covers your entire first 72 hours.
           </p>
           <ChevronDown className="mx-auto mt-16 w-6 h-6 text-muted-foreground animate-bounce" />
         </div>
