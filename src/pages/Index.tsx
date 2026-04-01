@@ -195,9 +195,15 @@ const Index = () => {
             <span className="text-primary">will make or break</span> your trip
             to Colombia.
           </h1>
-          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-4 leading-relaxed">
             Not a tourist guide. This is tactical local intelligence — the cheat
             codes that locals don't post on TripAdvisor.
+          </p>
+          <p className="font-mono text-xs sm:text-sm text-primary mb-2 flex items-center justify-center gap-2">
+            🔒 2,847+ travelers already briefed
+          </p>
+          <p className="text-muted-foreground text-sm italic mb-10">
+            Your flight is booked. The question is: are you prepared?
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
             <Button
