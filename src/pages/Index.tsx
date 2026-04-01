@@ -322,6 +322,44 @@ const Index = () => {
         </div>
       </section>
 
+      {/* TESTIMONIALS */}
+      <section className="py-20 sm:py-28 bg-card">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+            Field Reports // Post-Landing Intel
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+            They landed prepared. Here's what happened.
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {testimonials.map((t, i) => (
+              <div
+                key={i}
+                className="bg-background border border-border rounded-lg p-6 border-l-[3px] border-l-primary hover:shadow-lg hover:shadow-primary/5 transition-all"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span
+                    className={`font-mono text-xs px-2.5 py-0.5 rounded-full ${badgeBgClass[t.badgeAccent]}`}
+                  >
+                    {t.badge}
+                  </span>
+                  <span className="text-primary text-sm tracking-wide">★★★★★</span>
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed italic mb-3">
+                  "{t.quote}"
+                </p>
+                <p className="text-primary font-bold text-sm mb-4">
+                  → {t.keyResult}
+                </p>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {t.name} · {t.location}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* LOSS AVERSION */}
       <section className="py-20 sm:py-28 bg-card">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
