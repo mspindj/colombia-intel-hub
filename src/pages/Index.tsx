@@ -115,6 +115,47 @@ const faqs = [
   },
 ];
 
+const testimonials = [
+  {
+    name: "Jake R.",
+    location: "Austin, TX",
+    badge: "BOG-72H",
+    badgeAccent: "bogota",
+    quote: "A moto-taxi driver tried to charge me $40 from the airport. I already knew from the guide that the official taxi counter price was $8. Paid $8, kept $32. Guide paid for itself in literally 10 minutes.",
+    keyResult: "Saved $32 in 10 minutes",
+  },
+  {
+    name: "Sarah L.",
+    location: "London, UK",
+    badge: "MDE-72H",
+    badgeAccent: "medellin",
+    quote: "My friends who didn't read it ended up in the wrong neighborhood on night one and had to Uber back to Poblado. I went straight to the right zones — the nightlife chapter is worth the entire price.",
+    keyResult: "Knew exactly where to go on night one",
+  },
+  {
+    name: "Marcus W.",
+    location: "Toronto, CA",
+    badge: "CTG-72H",
+    badgeAccent: "cartagena",
+    quote: "Other tourists on my boat to Rosario paid 180,000 COP. I negotiated 95,000 because the guide told me the real price and the exact phrase to use. The vendor negotiation section alone is worth 10x the guide price.",
+    keyResult: "Paid almost half what other tourists paid",
+  },
+  {
+    name: "Emma K.",
+    location: "Sydney, AU",
+    badge: "BOG-72H",
+    badgeAccent: "bogota",
+    quote: "Downloaded it on the plane from Sydney. By the time I landed at El Dorado I felt like I'd already been there a week. No anxiety at immigration, no confusion with the SIM card, no taxi scam. Just ready.",
+    keyResult: "Felt like I'd already been there",
+  },
+];
+
+const badgeBgClass: Record<string, string> = {
+  bogota: "bg-[#c0392b]/20 text-[#c0392b]",
+  medellin: "bg-[#27ae60]/20 text-[#27ae60]",
+  cartagena: "bg-[#2980b9]/20 text-[#2980b9]",
+};
+
 const lossStats = [
   {
     value: "$40",
@@ -132,7 +173,6 @@ const lossStats = [
     highlight: true,
   },
 ];
-
 const accentBorderClass: Record<string, string> = {
   bogota: "border-bogota",
   medellin: "border-medellin",
@@ -276,6 +316,44 @@ const Index = () => {
                   {ch.num}
                 </span>
                 <p className="mt-2 font-semibold text-foreground">{ch.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="py-20 sm:py-28 bg-card">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+            Field Reports // Post-Landing Intel
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+            They landed prepared. Here's what happened.
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {testimonials.map((t, i) => (
+              <div
+                key={i}
+                className="bg-background border border-border rounded-lg p-6 border-l-[3px] border-l-primary hover:shadow-lg hover:shadow-primary/5 transition-all"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span
+                    className={`font-mono text-xs px-2.5 py-0.5 rounded-full ${badgeBgClass[t.badgeAccent]}`}
+                  >
+                    {t.badge}
+                  </span>
+                  <span className="text-primary text-sm tracking-wide">★★★★★</span>
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed italic mb-3">
+                  "{t.quote}"
+                </p>
+                <p className="text-primary font-bold text-sm mb-4">
+                  → {t.keyResult}
+                </p>
+                <p className="font-mono text-xs text-muted-foreground">
+                  {t.name} · {t.location}
+                </p>
               </div>
             ))}
           </div>
