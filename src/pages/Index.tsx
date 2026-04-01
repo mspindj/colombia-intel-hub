@@ -156,23 +156,8 @@ const badgeBgClass: Record<string, string> = {
   cartagena: "bg-[#2980b9]/20 text-[#2980b9]",
 };
 
-const lossStats = [
-  {
-    value: "$40",
-    desc: "What tourists pay for a taxi that should cost $8",
-    highlight: false,
-  },
-  {
-    value: "3 hrs",
-    desc: "Average time lost on day 1 figuring out basics locals already know",
-    highlight: false,
-  },
-  {
-    value: "$17",
-    desc: "The cost of knowing everything before you land — less than a lunch in Bogotá",
-    highlight: true,
-  },
-];
+
+
 const accentBorderClass: Record<string, string> = {
   bogota: "border-bogota",
   medellin: "border-medellin",
