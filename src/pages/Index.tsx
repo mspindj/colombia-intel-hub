@@ -147,11 +147,17 @@ const accentTextClass: Record<string, string> = {
 
 const Index = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [bgIndex, setBgIndex] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setBgIndex((i) => (i + 1) % 3), 4000);
+    return () => clearInterval(id);
   }, []);
 
   const scrollToCity = () => {
