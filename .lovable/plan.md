@@ -1,40 +1,40 @@
 
-# Me Gusta Colombia — Landing Page
 
-## Overview
-A dark, tactical-themed landing page for selling 72-hour survival guides for Colombia. The design blends military briefing aesthetics with clean, modern UI — gold accents on near-black backgrounds.
+# Hero Restructure Implementation
 
-## Pages & Sections
+## Summary
+Replace the current hero section (lines 182–230) with the new identity-framing copy, social proof, urgency, updated CTAs, and a 3-image crossfade background.
 
-### Single-page landing (Index)
+## Changes — `src/pages/Index.tsx` only
 
-1. **Fixed Nav** — Gold monospace "ME GUSTA COLOMBIA" logo + "Get Intel" CTA link, transparent background with blur on scroll
+### 1. Imports (line 14)
+- Add imports for `mdeBg` and `ctgBg` (medellin_background.jpg, cartagena_background.jpg)
+- Create a `heroBgs` array: `[heroBg, mdeBg, ctgBg]`
 
-2. **Hero** — "CLASSIFIED // FIRST-TIMER PROTOCOL" label, bold headline with gold highlight on "will make or break", subtitle, two CTA buttons (solid gold + outline gold), small trust text below
+### 2. State & Effect (after line 145)
+- Add `const [bgIndex, setBgIndex] = useState(0)`
+- Add `useEffect` with `setInterval(() => setBgIndex(i => (i + 1) % 3), 4000)` and `return () => clearInterval(id)` for proper cleanup
 
-3. **What's Inside** — 3×3 grid of numbered chapter cards (#141414 bg) with monospace chapter numbers in gold, chapter titles in white. Subtle border styling.
+### 3. Hero Background (lines 184–188)
+Replace single background div with 3 stacked absolute divs, each with:
+- `bg-cover bg-center absolute inset-0 transition-opacity duration-1000`
+- Active image: `opacity-100`, others: `opacity-0`
+- Dark overlay div remains on top
 
-4. **Loss Aversion** — Three stat cards side by side. First two in white text, third card highlighted in gold with the $17 price point. Dark card backgrounds.
+### 4. Hero Content (lines 189–228)
+Replace entirely with this structure:
+1. **Identity filter**: "FOR TRAVELERS WHO REFUSE TO WING IT" — `font-mono text-xs tracking-[0.3em] uppercase text-primary/60`
+2. **Classified label**: "CLASSIFIED // FIRST-TIMER PROTOCOL" — kept as-is
+3. **New H1**: "Tourists get scammed, overpay, and waste their first 3 days. **You won't.**" — last two words in `text-primary`
+4. **New subtitle**: "Every city has cheat codes the locals don't post online. We put them in a 72-hour tactical briefing — so you land prepared, not panicked."
+5. **Social proof row**: `2,847+ briefed | ⭐ 4.9 avg rating | 3 cities covered` — monospace, text-xs, numbers in foreground, labels in muted, separated by `|` dividers
+6. **Urgency**: "Your flight is booked. The clock started." — italic, text-sm, muted
+7. **CTAs**: "GET YOUR CITY BRIEFING — $17" (solid, scrolls to cities) + "ALL 3 CITIES — $37 (SAVE 27%)" (outline, links to Gumroad)
+8. **Micro-commitment**: "Takes 45 minutes to read. Covers your entire first 72 hours." — text-xs, monospace, muted
+9. **Bouncing chevron** — kept
 
-5. **City Cards** — 3×2 grid using uploaded banner images (1280x360) as card backgrounds. Each card shows city code, tagline, price, and accent-colored border/elements. Available cities link to Gumroad. Coming soon cities are dimmed/grayed.
+## Technical Notes
+- Crossfade uses CSS `transition-opacity duration-1000` on 3 layered divs — no extra library needed
+- Interval cleanup via `return () => clearInterval(id)` prevents memory leaks
+- No other files modified
 
-6. **Bundle Section** — Centered section with crossed-out $51, large gold $37, savings badge, and CTA button linking to Gumroad.
-
-7. **FAQ** — Accordion-style with 5 Q&As, monospace question labels, gold expand indicators.
-
-8. **Footer** — Brand name, email, social links (Pinterest, Facebook, Instagram).
-
-## Assets
-- Copy uploaded city images (banners + squares) into `src/assets/` for use in city cards and potential hero backgrounds
-- Use the Bogotá background image as a subtle hero background with dark overlay
-
-## Design System
-- Background: #0a0a0a, Cards: #141414
-- Gold: #d4a843 for CTAs, highlights, brand
-- City accents: Bogotá #c0392b, Medellín #27ae60, Cartagena #2980b9
-- Monospace font for labels/codes, bold sans-serif for headings
-- All external links open in new tabs to Gumroad
-
-## SEO
-- Page title: "Me Gusta Colombia | 72-Hour Survival Intel for First-Time Travelers"
-- Meta description optimized for the product
