@@ -195,15 +195,9 @@ const Index = () => {
             <span className="text-primary">will make or break</span> your trip
             to Colombia.
           </h1>
-          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-4 leading-relaxed">
+          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
             Not a tourist guide. This is tactical local intelligence — the cheat
             codes that locals don't post on TripAdvisor.
-          </p>
-          <p className="font-mono text-xs sm:text-sm text-primary mb-2 flex items-center justify-center gap-2">
-            🔒 2,847+ travelers already briefed
-          </p>
-          <p className="text-muted-foreground text-sm italic mb-10">
-            Your flight is booked. The question is: are you prepared?
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
             <Button
@@ -413,9 +407,6 @@ const Index = () => {
               GET THE EXPLORER BUNDLE
             </a>
           </Button>
-          <p className="text-muted-foreground text-xs font-mono mt-4">
-            Join 2,847+ travelers who landed prepared, not panicked.
-          </p>
         </div>
       </section>
 
@@ -444,42 +435,6 @@ const Index = () => {
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="py-20 sm:py-28 bg-card">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
-            Still reading? Your trip is closer than you think.
-          </h2>
-          <p className="text-muted-foreground text-sm sm:text-base mb-8 leading-relaxed max-w-lg mx-auto">
-            Every day you wait is another day you're not prepared. The intel is ready when you are.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
-            <Button
-              size="lg"
-              className="font-mono tracking-wider text-sm"
-              asChild
-            >
-              <a href="#cities" onClick={(e) => { e.preventDefault(); document.getElementById("cities")?.scrollIntoView({ behavior: "smooth" }); }}>
-                GET YOUR CITY FILE — $17
-              </a>
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="font-mono tracking-wider text-sm border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-              asChild
-            >
-              <a href="https://megustacomco.gumroad.com" target="_blank" rel="noopener noreferrer">
-                EXPLORER BUNDLE — $37
-              </a>
-            </Button>
-          </div>
-          <p className="text-muted-foreground text-xs font-mono">
-            Instant download. Read it on the plane.
-          </p>
         </div>
       </section>
 
