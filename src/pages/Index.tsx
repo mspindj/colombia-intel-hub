@@ -12,6 +12,10 @@ import bogBanner from "@/assets/BOG_1280x360.png";
 import mdeBanner from "@/assets/MDE_1280x360.png";
 import ctgBanner from "@/assets/CTG_1280x360.png";
 import heroBg from "@/assets/bogota_background.jpg";
+import mdeBg from "@/assets/medellin_background.jpg";
+import ctgBg from "@/assets/cartagena_background.jpg";
+
+const heroBgs = [heroBg, mdeBg, ctgBg];
 
 const chapters = [
   { num: "01", title: "Airport arrival & transport" },
