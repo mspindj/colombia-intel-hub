@@ -156,23 +156,8 @@ const badgeBgClass: Record<string, string> = {
   cartagena: "bg-[#2980b9]/20 text-[#2980b9]",
 };
 
-const lossStats = [
-  {
-    value: "$40",
-    desc: "What tourists pay for a taxi that should cost $8",
-    highlight: false,
-  },
-  {
-    value: "3 hrs",
-    desc: "Average time lost on day 1 figuring out basics locals already know",
-    highlight: false,
-  },
-  {
-    value: "$17",
-    desc: "The cost of knowing everything before you land — less than a lunch in Bogotá",
-    highlight: true,
-  },
-];
+
+
 const accentBorderClass: Record<string, string> = {
   bogota: "border-bogota",
   medellin: "border-medellin",
@@ -360,38 +345,81 @@ const Index = () => {
         </div>
       </section>
 
-      {/* LOSS AVERSION */}
+      {/* LOSS AVERSION — IDENTITY SPLIT */}
       <section className="py-20 sm:py-28 bg-card">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-10 text-center">
-            The Cost of Not Knowing
+          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+            INTEL COST ANALYSIS
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {lossStats.map((stat, i) => (
-              <div
-                key={i}
-                className={`rounded-lg p-6 sm:p-8 text-center border ${
-                  stat.highlight
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-background"
-                }`}
-              >
-                <p
-                  className={`text-4xl sm:text-5xl font-extrabold mb-3 ${
-                    stat.highlight ? "text-primary" : "text-foreground"
-                  }`}
-                >
-                  {stat.value}
-                </p>
-                <p
-                  className={`text-sm leading-relaxed ${
-                    stat.highlight ? "text-primary/80" : "text-muted-foreground"
-                  }`}
-                >
-                  {stat.desc}
-                </p>
-              </div>
-            ))}
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+            Two types of travelers land in Colombia every day.
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+            {/* LEFT: The Tourist */}
+            <div className="bg-background border border-border rounded-t-lg md:rounded-l-lg md:rounded-tr-none p-6 sm:p-8">
+              <h3 className="font-mono text-sm text-muted-foreground tracking-[0.2em] uppercase mb-6">
+                THE TOURIST
+              </h3>
+              <ul className="space-y-4">
+                {[
+                  "Pays $40 for a taxi that costs $8",
+                  "Wastes 3 hours figuring out basics on day 1",
+                  "Gets steered to overpriced restaurants by 'friendly' strangers",
+                  "Ends up in the wrong neighborhood after dark",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="text-[#c0392b] font-bold text-sm mt-0.5">✕</span>
+                    <span className="text-muted-foreground text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-xs text-[#c0392b]/80 font-mono">
+                Total cost of not knowing: $100+ and a ruined first impression
+              </p>
+            </div>
+
+            {/* Mobile separator */}
+            <div className="md:hidden border-t border-border" />
+
+            {/* RIGHT: The Prepared Traveler */}
+            <div className="bg-background border border-border rounded-b-lg md:rounded-r-lg md:rounded-bl-none p-6 sm:p-8 border-l-0 md:border-l-[3px] md:border-l-primary">
+              <h3 className="font-mono text-sm text-primary tracking-[0.2em] uppercase mb-6">
+                THE PREPARED TRAVELER
+              </h3>
+              <ul className="space-y-4">
+                {[
+                  "Takes the $8 official taxi — knows the exact counter location",
+                  "Navigates like a local from hour one",
+                  "Eats where locals eat at local prices",
+                  "Knows exactly which zones are safe for nightlife",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="text-primary font-bold text-sm mt-0.5">✓</span>
+                    <span className="text-foreground text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-xs text-primary/80 font-mono">
+                Cost of preparation: $17 — less than that overpriced taxi ride
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mt-12">
+            <a
+              href="https://megustacolombia.gumroad.com/l/bundle"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button size="lg" className="text-base font-bold tracking-wide px-8">
+                BECOME THE PREPARED TRAVELER
+              </Button>
+            </a>
+            <p className="font-mono text-xs text-muted-foreground mt-3">
+              Instant PDF download. Read it on the plane.
+            </p>
           </div>
         </div>
       </section>
