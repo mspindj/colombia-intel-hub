@@ -1,50 +1,71 @@
 
 
-# Testimonials Section — Between "What's Inside" and "Loss Aversion"
+# Loss Aversion Rewrite — Identity Split Comparison
 
 ## Summary
-Add a testimonials section with 4 cards in a 2-column grid at line 284, between the chapters grid and the loss aversion section.
+Replace the current 3-stat-card Loss Aversion section (lines 363–397) with a 2-column identity comparison layout: "The Tourist" vs "The Prepared Traveler".
 
 ## Changes — `src/pages/Index.tsx` only
 
-### 1. Add testimonials data array (after the existing data arrays, ~line 130)
-Array of 4 testimonial objects with fields: `name`, `location`, `city`, `badge`, `badgeAccent`, `stars`, `quote`, `keyResult`.
+### 1. Remove `lossStats` data array
+No longer needed — the comparison content will be inline.
 
-### 2. Insert new section (line 284, between `</section>` of chapters and `{/* LOSS AVERSION */}`)
+### 2. Replace section (lines 363–397)
 
-Structure:
+New structure:
 ```
-{/* TESTIMONIALS */}
-<section className="py-20 sm:py-28 bg-card">
-  <div className="max-w-6xl mx-auto px-4 sm:px-6">
-    <p> "FIELD REPORTS // POST-LANDING INTEL" — monospace, gold, tracking-wide </p>
-    <h2> "They landed prepared. Here's what happened." </h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {testimonials.map → card}
+{/* LOSS AVERSION — IDENTITY SPLIT */}
+<section py-20 bg-card>
+  <div max-w-5xl>
+    <p> "INTEL COST ANALYSIS" — monospace, gold, tracking-wide </p>
+    <h2> "Two types of travelers land in Colombia every day." </h2>
+
+    <div grid grid-cols-1 md:grid-cols-2 gap-0>
+
+      <!-- LEFT: The Tourist -->
+      <div bg-background border border-border rounded-l-lg p-8>
+        <h3 font-mono text-muted-foreground tracking-wide uppercase mb-6>THE TOURIST</h3>
+        <ul space-y-4>
+          4 items, each with red ✕ (text-[#c0392b]) + text-muted-foreground text-sm
+        </ul>
+        <p mt-6 text-xs text-[#c0392b]/80 font-mono>
+          "Total cost of not knowing: $100+ and a ruined first impression"
+        </p>
+      </div>
+
+      <!-- Vertical divider (hidden on mobile, shown md+) -->
+      <!-- On mobile: horizontal <Separator /> between columns -->
+
+      <!-- RIGHT: The Prepared Traveler -->
+      <div bg-background border border-border rounded-r-lg p-8 border-l-[3px] border-l-primary>
+        <h3 font-mono text-primary tracking-wide uppercase mb-6>THE PREPARED TRAVELER</h3>
+        <ul space-y-4>
+          4 items, each with gold ✓ (text-primary) + text-foreground text-sm
+        </ul>
+        <p mt-6 text-xs text-primary/80 font-mono>
+          "Cost of preparation: $17 — less than that overpriced taxi ride"
+        </p>
+      </div>
+    </div>
+
+    <!-- CTA below -->
+    <div text-center mt-12>
+      <Button gold solid, scrolls to #cities or Gumroad>
+        "BECOME THE PREPARED TRAVELER"
+      </Button>
+      <p font-mono text-xs text-muted-foreground mt-3>
+        "Instant PDF download. Read it on the plane."
+      </p>
     </div>
   </div>
 </section>
 ```
 
-### 3. Testimonial card design
-Each card:
-- `bg-card border border-border rounded-lg p-6 border-l-[3px] border-l-primary hover:shadow-lg hover:shadow-primary/5 transition-all`
-- Top row: city badge pill (accent-colored bg with white text, rounded-full, text-xs, monospace) + 5 gold stars (★ characters in text-primary)
-- Quote in `text-muted-foreground text-sm leading-relaxed italic`
-- Key result line below quote: `text-primary font-bold text-sm mt-3` — pulled out as separate element
-- Bottom: name + location in `font-mono text-xs text-muted-foreground mt-4`
+### 3. Mobile responsiveness
+- On mobile (`grid-cols-1`): columns stack vertically with a horizontal separator between them
+- On desktop (`md:grid-cols-2`): side-by-side with the right column's left border acting as divider
+- Left column gets `rounded-t-lg md:rounded-l-lg md:rounded-tr-none`, right gets `rounded-b-lg md:rounded-r-lg md:rounded-bl-none`
 
-### 4. Badge accent mapping
-Reuse existing `accentTextClass` or create badge bg classes:
-- bogota → `bg-[#c0392b]/20 text-[#c0392b]`
-- medellin → `bg-[#27ae60]/20 text-[#27ae60]`
-- cartagena → `bg-[#2980b9]/20 text-[#2980b9]`
-
-## Testimonial Data
-| # | Name | Location | City | Badge | Key Result |
-|---|------|----------|------|-------|------------|
-| 1 | Jake R. | Austin, TX | Bogotá | BOG-72H (red) | Saved $32 in 10 minutes |
-| 2 | Sarah L. | London, UK | Medellín | MDE-72H (green) | Knew exactly where to go on night one |
-| 3 | Marcus W. | Toronto, CA | Cartagena | CTG-72H (blue) | Paid almost half what other tourists paid |
-| 4 | Emma K. | Sydney, AU | Bogotá | BOG-72H (red) | Felt like I'd already been there |
+### 4. Cleanup
+Remove the `lossStats` array from the data section (~lines 115–130).
 
