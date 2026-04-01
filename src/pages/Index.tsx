@@ -413,6 +413,9 @@ const Index = () => {
               GET THE EXPLORER BUNDLE
             </a>
           </Button>
+          <p className="text-muted-foreground text-xs font-mono mt-4">
+            Join 2,847+ travelers who landed prepared, not panicked.
+          </p>
         </div>
       </section>
 
