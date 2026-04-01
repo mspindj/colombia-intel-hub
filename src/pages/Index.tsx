@@ -7,6 +7,19 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion";
+import CountUp from "@/components/CountUp";
+import {
+  sectionVariants,
+  heroChildVariants,
+  heroStagger,
+  staggerContainer,
+  fadeUpItem,
+  slideFromLeft,
+  slideFromRight,
+  scaleReveal,
+  viewportOnce,
+} from "@/lib/animations";
 
 import bogBanner from "@/assets/BOG_1280x360.png";
 import mdeBanner from "@/assets/MDE_1280x360.png";
@@ -156,8 +169,6 @@ const badgeBgClass: Record<string, string> = {
   cartagena: "bg-[#2980b9]/20 text-[#2980b9]",
 };
 
-
-
 const accentBorderClass: Record<string, string> = {
   bogota: "border-bogota",
   medellin: "border-medellin",
@@ -170,9 +181,22 @@ const accentTextClass: Record<string, string> = {
   cartagena: "text-cartagena",
 };
 
+const cityHoverShadow: Record<string, string> = {
+  bogota: "0 0 20px rgba(192, 57, 43, 0.2)",
+  medellin: "0 0 20px rgba(39, 174, 96, 0.2)",
+  cartagena: "0 0 20px rgba(41, 128, 185, 0.2)",
+};
+
 const Index = () => {
   const [scrolled, setScrolled] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
+  const [showChevron, setShowChevron] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 300 && showChevron) setShowChevron(false);
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -189,11 +213,16 @@ const Index = () => {
     document.getElementById("cities")?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // When reduced motion is preferred, skip all animations
+  const motionProps = prefersReducedMotion
+    ? { initial: undefined, animate: undefined, whileInView: undefined }
+    : {};
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* NAV */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
           scrolled ? "bg-background/90 backdrop-blur-md border-b border-border" : "bg-transparent"
         }`}
       >
@@ -227,32 +256,38 @@ const Index = () => {
           />
         ))}
         <div className="absolute inset-0 bg-background/85" />
-        <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center py-32">
-          <p className="font-mono text-xs tracking-[0.3em] uppercase text-primary/60 mb-4">
+        <motion.div
+          className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center py-32"
+          variants={heroStagger}
+          initial={prefersReducedMotion ? false : "hidden"}
+          animate="visible"
+          style={{ willChange: "transform" }}
+        >
+          <motion.p variants={heroChildVariants} className="font-mono text-xs tracking-[0.3em] uppercase text-primary/60 mb-4">
             For travelers who refuse to wing it
-          </p>
-          <p className="font-mono text-xs sm:text-sm text-primary tracking-[0.3em] mb-6 uppercase">
+          </motion.p>
+          <motion.p variants={heroChildVariants} className="font-mono text-xs sm:text-sm text-primary tracking-[0.3em] mb-6 uppercase">
             Classified // First-Timer Protocol
-          </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+          </motion.p>
+          <motion.h1 variants={heroChildVariants} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
             Tourists get scammed, overpay, and waste their first 3 days.{" "}
             <span className="text-primary">You won't.</span>
-          </h1>
-          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
+          </motion.h1>
+          <motion.p variants={heroChildVariants} className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
             Every city has cheat codes the locals don't post online. We put them
             in a 72-hour tactical briefing — so you land prepared, not panicked.
-          </p>
-          <div className="flex items-center justify-center gap-4 font-mono text-xs text-muted-foreground mb-4">
-            <span><span className="text-foreground font-bold">2,847+</span> briefed</span>
+          </motion.p>
+          <motion.div variants={heroChildVariants} className="flex items-center justify-center gap-4 font-mono text-xs text-muted-foreground mb-4">
+            <span><span className="text-foreground font-bold"><CountUp end={2847} suffix="+" /></span> briefed</span>
             <span className="text-border">|</span>
-            <span>⭐ <span className="text-foreground font-bold">4.9</span> avg rating</span>
+            <span>⭐ <span className="text-foreground font-bold"><CountUp end={4.9} decimals={1} /></span> avg rating</span>
             <span className="text-border">|</span>
-            <span><span className="text-foreground font-bold">3</span> cities covered</span>
-          </div>
-          <p className="italic text-sm text-muted-foreground mb-8">
+            <span><span className="text-foreground font-bold"><CountUp end={3} /></span> cities covered</span>
+          </motion.div>
+          <motion.p variants={heroChildVariants} className="italic text-sm text-muted-foreground mb-8">
             Your flight is booked. The clock started.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+          </motion.p>
+          <motion.div variants={heroChildVariants} className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
             <Button
               size="lg"
               className="font-mono tracking-wider text-sm"
@@ -274,53 +309,93 @@ const Index = () => {
                 ALL 3 CITIES — $37 (SAVE 27%)
               </a>
             </Button>
-          </div>
-          <p className="text-muted-foreground text-xs font-mono">
+          </motion.div>
+          <motion.p variants={heroChildVariants} className="text-muted-foreground text-xs font-mono">
             Takes 45 minutes to read. Covers your entire first 72 hours.
-          </p>
-          <ChevronDown className="mx-auto mt-16 w-6 h-6 text-muted-foreground animate-bounce" />
-        </div>
+          </motion.p>
+          {showChevron && (
+            <motion.div
+              className="mx-auto mt-16"
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <ChevronDown className="mx-auto w-6 h-6 text-muted-foreground" />
+            </motion.div>
+          )}
+        </motion.div>
       </section>
 
       {/* WHAT'S INSIDE */}
       <section className="py-20 sm:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
-            What's Inside
-          </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
-            9 chapters of local intel
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <motion.div
+            variants={sectionVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+            style={{ willChange: "transform" }}
+          >
+            <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+              What's Inside
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+              9 chapters of local intel
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            variants={staggerContainer(0.06)}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+          >
             {chapters.map((ch) => (
-              <div
+              <motion.div
                 key={ch.num}
+                variants={fadeUpItem(0.5)}
                 className="bg-card border border-border rounded-lg p-5 hover:border-primary/40 transition-colors"
+                style={{ willChange: "transform" }}
               >
                 <span className="font-mono text-primary text-sm font-bold">
                   {ch.num}
                 </span>
                 <p className="mt-2 font-semibold text-foreground">{ch.title}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* TESTIMONIALS */}
       <section className="py-20 sm:py-28 bg-card">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
-            Field Reports // Post-Landing Intel
-          </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
-            They landed prepared. Here's what happened.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <motion.div
+            variants={sectionVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+            style={{ willChange: "transform" }}
+          >
+            <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+              Field Reports // Post-Landing Intel
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+              They landed prepared. Here's what happened.
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            variants={staggerContainer(0.1)}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+          >
             {testimonials.map((t, i) => (
-              <div
+              <motion.div
                 key={i}
+                variants={fadeUpItem(0.6)}
                 className="bg-background border border-border rounded-lg p-6 border-l-[3px] border-l-primary hover:shadow-lg hover:shadow-primary/5 transition-all"
+                style={{ willChange: "transform" }}
               >
                 <div className="flex items-center justify-between mb-3">
                   <span
@@ -339,25 +414,40 @@ const Index = () => {
                 <p className="font-mono text-xs text-muted-foreground">
                   {t.name} · {t.location}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* LOSS AVERSION — IDENTITY SPLIT */}
       <section className="py-20 sm:py-28 bg-card">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
-            INTEL COST ANALYSIS
-          </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
-            Two types of travelers land in Colombia every day.
-          </h2>
+          <motion.div
+            variants={sectionVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+            style={{ willChange: "transform" }}
+          >
+            <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+              INTEL COST ANALYSIS
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+              Two types of travelers land in Colombia every day.
+            </h2>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
             {/* LEFT: The Tourist */}
-            <div className="bg-background border border-border rounded-t-lg md:rounded-l-lg md:rounded-tr-none p-6 sm:p-8">
+            <motion.div
+              className="bg-background border border-border rounded-t-lg md:rounded-l-lg md:rounded-tr-none p-6 sm:p-8"
+              variants={slideFromLeft}
+              initial={prefersReducedMotion ? false : "hidden"}
+              whileInView="visible"
+              viewport={viewportOnce}
+              style={{ willChange: "transform" }}
+            >
               <h3 className="font-mono text-sm text-muted-foreground tracking-[0.2em] uppercase mb-6">
                 THE TOURIST
               </h3>
@@ -377,13 +467,20 @@ const Index = () => {
               <p className="mt-6 text-xs text-[#c0392b]/80 font-mono">
                 Total cost of not knowing: $100+ and a ruined first impression
               </p>
-            </div>
+            </motion.div>
 
             {/* Mobile separator */}
             <div className="md:hidden border-t border-border" />
 
             {/* RIGHT: The Prepared Traveler */}
-            <div className="bg-background border border-border rounded-b-lg md:rounded-r-lg md:rounded-bl-none p-6 sm:p-8 border-l-0 md:border-l-[3px] md:border-l-primary">
+            <motion.div
+              className="bg-background border border-border rounded-b-lg md:rounded-r-lg md:rounded-bl-none p-6 sm:p-8 border-l-0 md:border-l-[3px] md:border-l-primary"
+              variants={slideFromRight}
+              initial={prefersReducedMotion ? false : "hidden"}
+              whileInView="visible"
+              viewport={viewportOnce}
+              style={{ willChange: "transform" }}
+            >
               <h3 className="font-mono text-sm text-primary tracking-[0.2em] uppercase mb-6">
                 THE PREPARED TRAVELER
               </h3>
@@ -403,11 +500,17 @@ const Index = () => {
               <p className="mt-6 text-xs text-primary/80 font-mono">
                 Cost of preparation: $17 — less than that overpriced taxi ride
               </p>
-            </div>
+            </motion.div>
           </div>
 
           {/* CTA */}
-          <div className="text-center mt-12">
+          <motion.div
+            className="text-center mt-12"
+            variants={sectionVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+          >
             <a
               href="https://megustacolombia.gumroad.com/l/bundle"
               target="_blank"
@@ -420,28 +523,50 @@ const Index = () => {
             <p className="font-mono text-xs text-muted-foreground mt-3">
               Instant PDF download. Read it on the plane.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CITY CARDS */}
       <section id="cities" className="py-20 sm:py-28 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
-            Choose Your Briefing
-          </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
-            City Survival Vaults
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            variants={sectionVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+            style={{ willChange: "transform" }}
+          >
+            <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+              Choose Your Briefing
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+              City Survival Vaults
+            </h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={staggerContainer(0.08)}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+          >
             {cities.map((city) => (
-              <div
+              <motion.div
                 key={city.code}
+                variants={fadeUpItem(0.5)}
                 className={`rounded-lg overflow-hidden border-2 transition-all ${
                   city.available
                     ? `${accentBorderClass[city.accent]} hover:scale-[1.02]`
                     : "border-border opacity-40 cursor-not-allowed"
                 }`}
+                whileHover={
+                  city.available && !prefersReducedMotion
+                    ? { scale: 1.03, boxShadow: cityHoverShadow[city.accent] }
+                    : undefined
+                }
+                transition={{ duration: 0.2, ease: "easeOut" }}
+                style={{ willChange: "transform" }}
               >
                 {city.available && city.banner ? (
                   <div className="relative h-36 sm:h-40 overflow-hidden">
@@ -502,15 +627,22 @@ const Index = () => {
                     </Button>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* BUNDLE */}
       <section className="py-20 sm:py-28 bg-card">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+        <motion.div
+          className="max-w-2xl mx-auto px-4 sm:px-6 text-center"
+          variants={sectionVariants}
+          initial={prefersReducedMotion ? false : "hidden"}
+          whileInView="visible"
+          viewport={viewportOnce}
+          style={{ willChange: "transform" }}
+        >
           <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3">
             Explorer Bundle
           </p>
@@ -521,9 +653,16 @@ const Index = () => {
             <span className="text-2xl text-muted-foreground line-through">
               $51
             </span>
-            <span className="text-5xl sm:text-6xl font-extrabold text-primary">
+            <motion.span
+              className="text-5xl sm:text-6xl font-extrabold text-primary"
+              variants={scaleReveal}
+              initial={prefersReducedMotion ? false : "hidden"}
+              whileInView="visible"
+              viewport={viewportOnce}
+              style={{ willChange: "transform" }}
+            >
               $37
-            </span>
+            </motion.span>
           </div>
           <p className="text-muted-foreground text-sm mb-8">
             Bogotá + Medellín + Cartagena — everything you need before you land.
@@ -541,18 +680,26 @@ const Index = () => {
               GET THE EXPLORER BUNDLE
             </a>
           </Button>
-        </div>
+        </motion.div>
       </section>
 
       {/* FAQ */}
       <section className="py-20 sm:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
-            Intel Briefing
-          </p>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
-            Frequently Asked Questions
-          </h2>
+          <motion.div
+            variants={sectionVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView="visible"
+            viewport={viewportOnce}
+            style={{ willChange: "transform" }}
+          >
+            <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3 text-center">
+              Intel Briefing
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-center mb-12">
+              Frequently Asked Questions
+            </h2>
+          </motion.div>
           <Accordion type="single" collapsible className="space-y-2">
             {faqs.map((faq, i) => (
               <AccordionItem
@@ -573,7 +720,13 @@ const Index = () => {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-border py-12">
+      <motion.footer
+        className="border-t border-border py-12"
+        variants={sectionVariants}
+        initial={prefersReducedMotion ? false : "hidden"}
+        whileInView="visible"
+        viewport={viewportOnce}
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
@@ -611,7 +764,7 @@ const Index = () => {
             © {new Date().getFullYear()} Me Gusta Colombia. All rights reserved.
           </p>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 };
