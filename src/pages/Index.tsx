@@ -739,6 +739,59 @@ const Index = () => {
         </div>
       </section>
 
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
+      {/* FINAL CTA */}
+      <section className="py-20 sm:py-28 bg-gradient-to-b from-card to-background">
+        <motion.div
+          className="max-w-3xl mx-auto px-4 sm:px-6 text-center"
+          variants={sectionVariants}
+          initial={prefersReducedMotion ? false : "hidden"}
+          whileInView="visible"
+          viewport={viewportOnce}
+          style={{ willChange: "transform" }}
+        >
+          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3">
+            Final Briefing
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
+            Still scrolling? Your trip is closer than you think.
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-8">
+            Every traveler who bought this guide said the same thing: "I wish I had this on my last trip."
+            Don't be the one who says it after.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+            <Button
+              size="lg"
+              className="font-mono tracking-wider text-sm"
+              onClick={scrollToCity}
+            >
+              GET YOUR CITY FILE — $17
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="font-mono tracking-wider text-sm border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              asChild
+            >
+              <a
+                href="https://megustacomco.gumroad.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                EXPLORER BUNDLE — $37
+              </a>
+            </Button>
+          </div>
+          <p className="text-muted-foreground text-xs font-mono">
+            Join <CountUp end={2847} suffix="+" /> travelers who landed prepared, not panicked.
+          </p>
+        </motion.div>
+      </section>
+
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* FOOTER */}
       <motion.footer
         className="border-t border-border py-12"
