@@ -817,7 +817,7 @@ const Index = () => {
             </div>
             <div className="flex gap-6">
               {[
-                { name: "Pinterest", url: "https://pinterest.com" },
+                { name: "Pinterest", url: "https://www.pinterest.com/megustacolombia" },
                 { name: "Facebook", url: "https://facebook.com" },
                 { name: "Instagram", url: "https://instagram.com" },
               ].map((s) => (
