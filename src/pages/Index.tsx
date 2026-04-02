@@ -701,6 +701,8 @@ const Index = () => {
         </motion.div>
       </section>
 
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* FAQ */}
       <section className="py-20 sm:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
