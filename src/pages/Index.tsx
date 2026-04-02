@@ -304,7 +304,7 @@ const Index = () => {
               asChild
             >
               <a
-                href="https://megustacomco.gumroad.com"
+                href="https://megustacomco.gumroad.com/l/explorer-bundle"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -691,7 +691,7 @@ const Index = () => {
             asChild
           >
             <a
-              href="https://megustacomco.gumroad.com"
+              href="https://megustacomco.gumroad.com/l/explorer-bundle"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -776,7 +776,7 @@ const Index = () => {
               asChild
             >
               <a
-                href="https://megustacomco.gumroad.com"
+                href="https://megustacomco.gumroad.com/l/explorer-bundle"
                 target="_blank"
                 rel="noopener noreferrer"
               >
