@@ -628,14 +628,19 @@ const Index = () => {
                       </Button>
                     </a>
                   ) : (
-                    <Button
-                      className="w-full font-mono tracking-wider text-sm"
-                      size="sm"
-                      disabled
-                      variant="secondary"
-                    >
-                      COMING SOON
-                    </Button>
+                    <>
+                      <Button
+                        className="w-full font-mono tracking-wider text-sm"
+                        size="sm"
+                        disabled
+                        variant="secondary"
+                      >
+                        COMING SOON
+                      </Button>
+                      <p className="text-xs text-muted-foreground mt-2 font-mono">
+                        Want this city? <span className="text-primary cursor-pointer hover:underline">Let us know →</span>
+                      </p>
+                    </>
                   )}
                 </div>
               </motion.div>
