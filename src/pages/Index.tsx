@@ -649,6 +649,8 @@ const Index = () => {
         </div>
       </section>
 
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* BUNDLE */}
       <section className="py-20 sm:py-28 bg-card">
         <motion.div
