@@ -191,11 +191,13 @@ const Index = () => {
   const [scrolled, setScrolled] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const [showChevron, setShowChevron] = useState(true);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest > 300 && showChevron) setShowChevron(false);
+    setShowBackToTop(latest > 600);
   });
 
   useEffect(() => {
