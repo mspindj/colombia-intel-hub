@@ -6,8 +6,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
-import { motion, useScroll, useMotionValueEvent, useReducedMotion } from "framer-motion";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { motion, useScroll, useMotionValueEvent, useReducedMotion, AnimatePresence } from "framer-motion";
 import CountUp from "@/components/CountUp";
 import {
   sectionVariants,
@@ -191,11 +191,13 @@ const Index = () => {
   const [scrolled, setScrolled] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
   const [showChevron, setShowChevron] = useState(true);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest > 300 && showChevron) setShowChevron(false);
+    setShowBackToTop(latest > 600);
   });
 
   useEffect(() => {
@@ -325,6 +327,9 @@ const Index = () => {
         </motion.div>
       </section>
 
+      {/* GRADIENT DIVIDER */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* WHAT'S INSIDE */}
       <section className="py-20 sm:py-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -365,6 +370,8 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
 
       {/* TESTIMONIALS */}
       <section className="py-20 sm:py-28 bg-card">
@@ -419,6 +426,8 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
 
       {/* LOSS AVERSION — IDENTITY SPLIT */}
       <section className="py-20 sm:py-28 bg-card">
@@ -527,6 +536,8 @@ const Index = () => {
         </div>
       </section>
 
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* CITY CARDS */}
       <section id="cities" className="py-20 sm:py-28 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -617,14 +628,19 @@ const Index = () => {
                       </Button>
                     </a>
                   ) : (
-                    <Button
-                      className="w-full font-mono tracking-wider text-sm"
-                      size="sm"
-                      disabled
-                      variant="secondary"
-                    >
-                      COMING SOON
-                    </Button>
+                    <>
+                      <Button
+                        className="w-full font-mono tracking-wider text-sm"
+                        size="sm"
+                        disabled
+                        variant="secondary"
+                      >
+                        COMING SOON
+                      </Button>
+                      <p className="text-xs text-muted-foreground mt-2 font-mono">
+                        Want this city? <span className="text-primary cursor-pointer hover:underline">Let us know →</span>
+                      </p>
+                    </>
                   )}
                 </div>
               </motion.div>
@@ -632,6 +648,8 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
 
       {/* BUNDLE */}
       <section className="py-20 sm:py-28 bg-card">
@@ -683,6 +701,8 @@ const Index = () => {
         </motion.div>
       </section>
 
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* FAQ */}
       <section className="py-20 sm:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
@@ -719,6 +739,59 @@ const Index = () => {
         </div>
       </section>
 
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
+      {/* FINAL CTA */}
+      <section className="py-20 sm:py-28 bg-gradient-to-b from-card to-background">
+        <motion.div
+          className="max-w-3xl mx-auto px-4 sm:px-6 text-center"
+          variants={sectionVariants}
+          initial={prefersReducedMotion ? false : "hidden"}
+          whileInView="visible"
+          viewport={viewportOnce}
+          style={{ willChange: "transform" }}
+        >
+          <p className="font-mono text-xs text-primary tracking-[0.3em] uppercase mb-3">
+            Final Briefing
+          </p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-4">
+            Still scrolling? Your trip is closer than you think.
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-8">
+            Every traveler who bought this guide said the same thing: "I wish I had this on my last trip."
+            Don't be the one who says it after.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+            <Button
+              size="lg"
+              className="font-mono tracking-wider text-sm"
+              onClick={scrollToCity}
+            >
+              GET YOUR CITY FILE — $17
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="font-mono tracking-wider text-sm border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              asChild
+            >
+              <a
+                href="https://megustacomco.gumroad.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                EXPLORER BUNDLE — $37
+              </a>
+            </Button>
+          </div>
+          <p className="text-muted-foreground text-xs font-mono">
+            Join <CountUp end={2847} suffix="+" /> travelers who landed prepared, not panicked.
+          </p>
+        </motion.div>
+      </section>
+
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* FOOTER */}
       <motion.footer
         className="border-t border-border py-12"
@@ -744,7 +817,7 @@ const Index = () => {
             </div>
             <div className="flex gap-6">
               {[
-                { name: "Pinterest", url: "https://pinterest.com" },
+                { name: "Pinterest", url: "https://www.pinterest.com/megustacolombia" },
                 { name: "Facebook", url: "https://facebook.com" },
                 { name: "Instagram", url: "https://instagram.com" },
               ].map((s) => (
@@ -765,6 +838,23 @@ const Index = () => {
           </p>
         </div>
       </motion.footer>
+
+      {/* BACK TO TOP */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors"
+            aria-label="Back to top"
+          >
+            <ChevronUp className="w-5 h-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
