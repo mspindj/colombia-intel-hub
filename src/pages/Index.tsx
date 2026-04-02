@@ -371,6 +371,8 @@ const Index = () => {
         </div>
       </section>
 
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* TESTIMONIALS */}
       <section className="py-20 sm:py-28 bg-card">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
