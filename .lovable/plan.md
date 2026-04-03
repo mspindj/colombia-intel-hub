@@ -1,47 +1,32 @@
 
 
-# Final CTA + Visual Polish
+# Quick Fixes: Favicon, Hero H1 Line Break
 
-## Summary
-Six improvements: final CTA section, gradient section dividers, back-to-top button, fixed social links, "coming soon" city card text, and SEO meta updates.
+## 1. Fix broken favicon tag — `index.html` line 16
 
-## Changes
+The current favicon `<link>` tag is malformed — the `href` contains unescaped HTML entities and a broken SVG that leaks raw text (`pin " type="image/svg+xml" />`) onto the page. Replace line 16 with a properly formatted SVG data URI favicon:
 
-### 1. Final CTA Section — between FAQ and Footer (after line 720)
-New section with gradient background (`bg-gradient-to-b from-card to-background`):
-- Monospace label: "FINAL BRIEFING" (gold)
-- Headline: "Still scrolling? Your trip is closer than you think."
-- Subtext paragraph
-- Two CTA buttons: primary "$17" + outline "$37"
-- Social proof line with CountUp for 2,847+
-- Wrapped in `motion.div` with `sectionVariants`
-
-### 2. Gradient Section Dividers
-Create a reusable `<GradientDivider />` inline component — a `<div>` with `h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent`. Insert between every major section (after hero, after what's inside, after testimonials, after identity split, after cities, after bundle, after FAQ).
-
-### 3. Back-to-Top Button
-Add state `showBackToTop` using the existing `useScroll` + `useMotionValueEvent` (already in use for hero chevron). Renders a fixed `motion.button` at `bottom-6 right-6`, 40x40px, rounded-full, `bg-primary text-primary-foreground`, with `ChevronUp` icon. Fades in/out with `AnimatePresence`. Smooth scrolls to top on click.
-
-### 4. Fix Footer Social Links (line 747)
-- Pinterest URL → `https://www.pinterest.com/megustacolombia`
-- Facebook/Instagram remain generic for now
-
-### 5. Coming Soon City Cards — "Want this city?" text (after line 627)
-Below the disabled "COMING SOON" button, add:
-```
-<p className="text-xs text-muted-foreground mt-2 font-mono">
-  Want this city? <span className="text-primary cursor-pointer hover:underline">Let us know →</span>
-</p>
+```html
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📍</text></svg>" type="image/svg+xml" />
 ```
 
-### 6. SEO Meta Tags — `index.html`
-- Update `og:image` to point to a city banner (use one of the uploaded images path)
-- Update `meta description` to the new copy
-- Add a favicon link (use a simple gold-themed SVG data URI for a map pin icon)
+## 2. Bundle URLs — Already correct
+
+All 3 bundle links already point to `https://megustacomco.gumroad.com/l/explorer-bundle`. No changes needed.
+
+## 3. Hero H1 mobile line break — `src/pages/Index.tsx` line 275–276
+
+Add a `<br className="sm:hidden" />` before "You won't." so it wraps to its own line on mobile but stays inline on larger screens:
+
+```tsx
+Tourists get scammed, overpay, and waste their first 3 days.
+<br className="sm:hidden" />
+{" "}<span className="text-primary">You won't.</span>
+```
 
 ## File Summary
-| File | Action |
+| File | Change |
 |------|--------|
-| `src/pages/Index.tsx` | Add final CTA section, gradient dividers, back-to-top button, fix social links, add coming-soon text |
-| `index.html` | Update meta description, og:image, add favicon |
+| `index.html` | Fix malformed favicon link tag |
+| `src/pages/Index.tsx` | Add responsive `<br />` in H1 |
 
