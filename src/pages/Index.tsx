@@ -759,7 +759,7 @@ const Index = () => {
                         COMING SOON
                       </Button>
                       <p className="text-xs text-muted-foreground mt-2 font-mono">
-                        Want this city? <span className="text-primary cursor-pointer hover:underline">Let us know →</span>
+                        Want this city? <a href="#free-intel" onClick={(e) => { e.preventDefault(); document.getElementById("free-intel")?.scrollIntoView({ behavior: "smooth" }); }} className="text-primary cursor-pointer hover:underline">Let us know →</a>
                       </p>
                     </>
                   )}
