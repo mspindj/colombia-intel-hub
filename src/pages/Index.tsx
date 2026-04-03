@@ -272,8 +272,9 @@ const Index = () => {
             Classified // First-Timer Protocol
           </motion.p>
           <motion.h1 variants={heroChildVariants} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-            Tourists get scammed, overpay, and waste their first 3 days.{" "}
-            <span className="text-primary">You won't.</span>
+            Tourists get scammed, overpay, and waste their first 3 days.
+            <br className="sm:hidden" />
+            {" "}<span className="text-primary">You won't.</span>
           </motion.h1>
           <motion.p variants={heroChildVariants} className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
             Every city has cheat codes the locals don't post online. We put them
