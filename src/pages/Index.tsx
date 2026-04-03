@@ -593,6 +593,72 @@ const Index = () => {
 
       <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
 
+      {/* LEAD MAGNET */}
+      <section id="free-intel" className="py-24 bg-card scroll-mt-16">
+        <motion.div
+          variants={sectionVariants}
+          initial={prefersReducedMotion ? false : "hidden"}
+          whileInView="visible"
+          viewport={viewportOnce}
+          style={{ willChange: "transform" }}
+        >
+          <div className="max-w-xl mx-auto px-6 text-center">
+            <p className="font-mono text-xs text-primary/70 tracking-[0.3em] uppercase mb-3">
+              FREE INTEL // ARRIVAL CHEAT SHEET
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold mb-4">
+              Land in Colombia like you've been before.
+            </h2>
+            <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
+              Free 1-page PDF — airport hacks, taxi prices, first-day survival moves. No spam, just intel.
+            </p>
+
+            {leadStatus === 'success' ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <span className="text-primary text-2xl">✓</span>
+                <p className="text-foreground font-semibold mt-2">Check your inbox — intel incoming.</p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleLeadSubmit}>
+                <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                  <Input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={leadEmail}
+                    onChange={(e) => {
+                      setLeadEmail(e.target.value);
+                      if (leadStatus === 'error') setLeadStatus('idle');
+                    }}
+                    className="bg-[#0a0a0a] border-border"
+                    disabled={leadStatus === 'loading'}
+                  />
+                  <Button
+                    type="submit"
+                    className="font-mono tracking-wider whitespace-nowrap"
+                    disabled={leadStatus === 'loading'}
+                  >
+                    {leadStatus === 'loading' ? 'Sending...' : 'Send Me the Cheat Sheet'}
+                  </Button>
+                </div>
+                {leadStatus === 'error' && (
+                  <p className="text-xs text-destructive mt-3">{leadError}</p>
+                )}
+              </form>
+            )}
+
+            <p className="text-xs text-muted-foreground mt-6 font-mono">
+              Join 2,847+ travelers who showed up prepared. Unsubscribe anytime.
+            </p>
+          </div>
+        </motion.div>
+      </section>
+
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
+
       {/* CITY CARDS */}
       <section id="cities" className="py-20 sm:py-28 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
