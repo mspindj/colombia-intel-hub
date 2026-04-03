@@ -274,16 +274,28 @@ const Index = () => {
           <span className="font-mono font-bold text-primary tracking-[0.25em] text-xs sm:text-sm">
             ME GUSTA COLOMBIA
           </span>
-          <a
-            href="#cities"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToCity();
-            }}
-            className="font-mono text-xs text-primary hover:text-primary/80 transition-colors tracking-wider"
-          >
-            GET INTEL →
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="#free-intel"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("free-intel")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="font-mono text-xs text-primary/70 hover:text-primary transition-colors tracking-wider hidden sm:inline"
+            >
+              FREE INTEL
+            </a>
+            <a
+              href="#cities"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToCity();
+              }}
+              className="font-mono text-xs text-primary hover:text-primary/80 transition-colors tracking-wider"
+            >
+              GET INTEL →
+            </a>
+          </div>
         </div>
       </nav>
 
