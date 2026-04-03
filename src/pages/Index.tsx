@@ -221,39 +221,32 @@ const Index = () => {
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(leadEmail.trim())) {
+    if (!leadEmail || !leadEmail.includes('@')) {
+      setLeadError('Enter a valid email address');
       setLeadStatus('error');
-      setLeadError('Please enter a valid email address.');
       return;
     }
     setLeadStatus('loading');
+    setLeadError('');
     try {
-      const response = await fetch('https://api.brevo.com/v3/contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': import.meta.env.VITE_BREVO_API_KEY || '',
-        },
-        body: JSON.stringify({
-          email: leadEmail.trim(),
-          listIds: [3],
-          updateEnabled: true,
-        }),
-      });
-      if (response.ok || response.status === 204) {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/subscribe`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: leadEmail.trim() }),
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
         setLeadStatus('success');
       } else {
-        const data = await response.json();
-        if (data.code === 'duplicate_parameter') {
-          setLeadStatus('success');
-        } else {
-          throw new Error(data.message || 'Something went wrong.');
-        }
+        setLeadError(data.error || 'Something went wrong. Try again or email hola@megusta.com.co');
+        setLeadStatus('error');
       }
-    } catch (err: any) {
+    } catch (err) {
+      setLeadError('Connection error. Try again or email hola@megusta.com.co');
       setLeadStatus('error');
-      setLeadError(err.message || 'Something went wrong. Try again or email hola@megusta.com.co');
     }
   };
 
