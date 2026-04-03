@@ -7,10 +7,17 @@ const CORS_HEADERS = {
 };
 
 const KEYWORDS = [
-  "colombia travel", "colombia first time", "visiting colombia",
-  "bogota tips", "medellin tips", "cartagena tourist",
-  "colombia solo travel", "colombia safety", "colombia digital nomad",
-  "moving to colombia", "colombia vacation",
+  "colombia travel tips",
+  "colombia first time",
+  "visiting colombia",
+  "bogota tips",
+  "medellin tips",
+  "cartagena tourist",
+  "colombia solo travel",
+  "colombia safety travel",
+  "colombia digital nomad",
+  "moving to colombia",
+  "colombia vacation advice",
 ];
 
 interface RedditPost {
@@ -19,51 +26,27 @@ interface RedditPost {
   subreddit: string;
   score: number;
   num_comments: number;
-  created_utc: number;
   selftext: string;
-  permalink: string;
 }
 
-async function getRedditToken(): Promise<string> {
-  const clientId = Deno.env.get("REDDIT_CLIENT_ID")!;
-  const clientSecret = Deno.env.get("REDDIT_CLIENT_SECRET")!;
-  const username = Deno.env.get("REDDIT_USERNAME")!;
-  const password = Deno.env.get("REDDIT_PASSWORD")!;
-  const auth = btoa(`${clientId}:${clientSecret}`);
-  const res = await fetch("https://www.reddit.com/api/v1/access_token", {
-    method: "POST",
-    headers: {
-      "Authorization": `Basic ${auth}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-      "User-Agent": "MeGustaColombiaMonitor/1.0",
-    },
-    body: `grant_type=password&username=${username}&password=${password}`,
+async function searchReddit(query: string): Promise<RedditPost[]> {
+  const url = `https://www.reddit.com/search.json?q=${encodeURIComponent(query)}&sort=new&t=day&limit=10`;
+  const res = await fetch(url, {
+    headers: { "User-Agent": "MeGustaColombiaMonitor/1.0 (by megusta.com.co)" },
   });
+  if (!res.ok) {
+    console.error(`Reddit search failed for "${query}": ${res.status}`);
+    return [];
+  }
   const data = await res.json();
-  return data.access_token;
-}
-
-async function searchReddit(token: string, query: string): Promise<RedditPost[]> {
-  const res = await fetch(
-    `https://oauth.reddit.com/search?q=${encodeURIComponent(query)}&sort=new&t=day&limit=10`,
-    {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "User-Agent": "MeGustaColombiaMonitor/1.0",
-      },
-    }
-  );
-  const data = await res.json();
-  if (!data.data?.children) return [];
+  if (!data?.data?.children) return [];
   return data.data.children.map((child: any) => ({
     title: child.data.title,
     url: `https://reddit.com${child.data.permalink}`,
     subreddit: child.data.subreddit_name_prefixed,
     score: child.data.score,
     num_comments: child.data.num_comments,
-    created_utc: child.data.created_utc,
     selftext: child.data.selftext?.substring(0, 200) || "",
-    permalink: child.data.permalink,
   }));
 }
 
@@ -71,13 +54,22 @@ async function saveToNotion(posts: RedditPost[]): Promise<number> {
   const notionKey = Deno.env.get("NOTION_API_KEY")!;
   const databaseId = Deno.env.get("NOTION_REDDIT_DB_ID")!;
   let saved = 0;
+  const knownSubreddits = ["r/colombia", "r/travel", "r/solotravel", "r/digitalnomad", "r/bogota", "r/medellin"];
   for (const post of posts) {
-    const subredditMap: Record<string, string> = {
-      "r/colombia": "r/colombia", "r/travel": "r/travel", "r/solotravel": "r/solotravel",
-      "r/digitalnomad": "r/digitalnomad", "r/bogota": "r/bogota", "r/medellin": "r/medellin",
-    };
-    const subredditValue = subredditMap[post.subreddit] || post.subreddit;
+    const subredditValue = knownSubreddits.includes(post.subreddit) ? post.subreddit : null;
     try {
+      const properties: any = {
+        "Title": { title: [{ text: { content: post.title.substring(0, 200) } }] },
+        "URL": { url: post.url },
+        "Score": { number: post.score },
+        "Comments": { number: post.num_comments },
+        "Found": { date: { start: new Date().toISOString().split("T")[0] } },
+        "Responded": { checkbox: false },
+        "Notes": { rich_text: [{ text: { content: post.selftext.substring(0, 200) } }] },
+      };
+      if (subredditValue) {
+        properties["Subreddit"] = { select: { name: subredditValue } };
+      }
       const res = await fetch("https://api.notion.com/v1/pages", {
         method: "POST",
         headers: {
@@ -85,23 +77,12 @@ async function saveToNotion(posts: RedditPost[]): Promise<number> {
           "Content-Type": "application/json",
           "Notion-Version": "2022-06-28",
         },
-        body: JSON.stringify({
-          parent: { database_id: databaseId },
-          properties: {
-            "Title": { title: [{ text: { content: post.title.substring(0, 200) } }] },
-            "URL": { url: post.url },
-            "Subreddit": { select: { name: subredditValue } },
-            "Score": { number: post.score },
-            "Comments": { number: post.num_comments },
-            "Found": { date: { start: new Date().toISOString().split("T")[0] } },
-            "Responded": { checkbox: false },
-            "Notes": { rich_text: [{ text: { content: post.selftext.substring(0, 200) } }] },
-          },
-        }),
+        body: JSON.stringify({ parent: { database_id: databaseId }, properties }),
       });
       if (res.ok) saved++;
+      else console.error(`Notion save failed: ${res.status} ${await res.text()}`);
     } catch (err) {
-      console.error(`Failed to save post: ${post.title}`, err);
+      console.error(`Failed to save: ${post.title}`, err);
     }
   }
   return saved;
@@ -111,21 +92,17 @@ async function sendNotification(posts: RedditPost[]): Promise<void> {
   const brevoKey = Deno.env.get("BREVO_API_KEY");
   const notifyEmail = Deno.env.get("NOTIFY_EMAIL") || "hola@megusta.com.co";
   if (!brevoKey || posts.length === 0) return;
-  const postList = posts
-    .map((p) => `[${p.score} up ${p.num_comments} comments] ${p.subreddit}: ${p.title}\n  ${p.url}`)
+  const postList = posts.slice(0, 10)
+    .map((p) => `[${p.score} up, ${p.num_comments} comments] ${p.subreddit}\n${p.title}\n${p.url}`)
     .join("\n\n");
   await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
-    headers: {
-      "accept": "application/json",
-      "content-type": "application/json",
-      "api-key": brevoKey,
-    },
+    headers: { "accept": "application/json", "content-type": "application/json", "api-key": brevoKey },
     body: JSON.stringify({
       sender: { name: "Me Gusta Bot", email: notifyEmail },
       to: [{ email: notifyEmail }],
       subject: `${posts.length} Reddit opportunities found`,
-      textContent: `Reddit Monitor found ${posts.length} relevant posts:\n\n${postList}\n\nRespond to these at megusta.com.co`,
+      textContent: `Reddit Monitor found ${posts.length} relevant posts:\n\n${postList}\n\nCheck the Reddit Opportunities database in Notion for the full list.`,
     }),
   });
 }
@@ -135,18 +112,17 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
   try {
-    const token = await getRedditToken();
     const allPosts: RedditPost[] = [];
     const seenUrls = new Set<string>();
     for (const keyword of KEYWORDS) {
-      const posts = await searchReddit(token, keyword);
+      const posts = await searchReddit(keyword);
       for (const post of posts) {
         if (!seenUrls.has(post.url) && post.score >= 2) {
           seenUrls.add(post.url);
           allPosts.push(post);
         }
       }
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 7000));
     }
     allPosts.sort((a, b) => b.score - a.score);
     const topPosts = allPosts.slice(0, 20);

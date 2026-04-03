@@ -14,16 +14,16 @@ const CITIES = [
 
 const CHANNEL_PROMPTS: Record<string, string> = {
   Pinterest: "Write a Pinterest pin description (under 500 characters). Make it searchable with travel keywords. Include a call to action. Format: Hook line + 2-3 benefit bullets + CTA. No hashtags.",
-  Reddit: "Write a helpful Reddit comment responding to someone asking about traveling to this city. Be genuinely helpful, not salesy. Mention 2-3 specific tactical tips. At the end, casually mention a guide with the link. Keep it under 150 words. Sound like a real person.",
+  Reddit: "Write a helpful Reddit comment responding to someone asking about traveling to this city. Be genuinely helpful, not salesy. Mention 2-3 specific tactical tips. Casually mention a guide with the link at the end. Under 150 words. Sound like a real person.",
   Facebook: "Write a Facebook post (under 280 characters) with an attention-grabbing hook about this city. Conversational tone. Include a CTA. No emojis.",
-  Instagram: "Write an Instagram caption (under 2200 characters). Bold hook line. One surprising fact about the city. CTA at end. Add 10-15 relevant hashtags separated by line breaks.",
+  Instagram: "Write an Instagram caption (under 2200 characters). Bold hook line. One surprising fact. CTA at end. 10-15 relevant hashtags separated by line breaks.",
   Email: "Write an email subject line (under 60 characters) that is curiosity-driven or fear-based. Also write a 2-sentence preview text.",
 };
 
 async function generateCopy(city: typeof CITIES[0], channel: string): Promise<string> {
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY")!;
-  const systemPrompt = "You are a copywriter for Me Gusta Colombia (megusta.com.co), a brand that sells tactical 72-hour survival guides for travelers visiting Colombian cities. The tone is: direct, no-BS, insider knowledge, slightly edgy. NOT a tourist guide — this is local intelligence. Never use the word vibrant or bustling. Never be generic.";
-  const userPrompt = `Generate copy for: ${city.name} (${city.code})\nCity tagline: "${city.tagline}"\nCity highlights: ${city.highlights}\nProduct URL: ${city.gumroadUrl}\nPrice: $17\n\nChannel: ${channel}\n${CHANNEL_PROMPTS[channel]}`;
+  const systemPrompt = "You are a copywriter for Me Gusta Colombia (megusta.com.co), a brand that sells tactical 72-hour survival guides for travelers visiting Colombian cities. Tone: direct, no-BS, insider knowledge, slightly edgy. NOT a tourist guide — local intelligence. Never use vibrant or bustling. Never be generic.";
+  const userPrompt = `Generate copy for: ${city.name} (${city.code})\nTagline: "${city.tagline}"\nHighlights: ${city.highlights}\nURL: ${city.gumroadUrl}\nPrice: $17\n\nChannel: ${channel}\n${CHANNEL_PROMPTS[channel]}`;
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": apiKey, "anthropic-version": "2023-06-01", "content-type": "application/json" },
