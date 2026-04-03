@@ -193,6 +193,9 @@ const Index = () => {
   const [bgIndex, setBgIndex] = useState(0);
   const [showChevron, setShowChevron] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadStatus, setLeadStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [leadError, setLeadError] = useState("");
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
 
