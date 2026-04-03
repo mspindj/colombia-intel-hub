@@ -576,7 +576,7 @@ const Index = () => {
             viewport={viewportOnce}
           >
             <a
-              href="https://megustacolombia.gumroad.com/l/bundle"
+              href="https://megustacomco.gumroad.com/l/colombia-arrival-cheat-sheet"
               target="_blank"
               rel="noopener noreferrer"
             >
