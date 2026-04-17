@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -8,67 +9,54 @@ const CORS_HEADERS = {
 
 const PAGE_ID = "1068628786330276";
 const IG_ACCOUNT_ID = "17841480006391349";
-const STORAGE_BASE = "https://uocwxwvcrnkfnnoyjzyb.supabase.co/storage/v1/object/public/content/posts";
+const STORAGE_BASE = "https://uocwxwvcrnkfnnoyjzyb.supabase.co/storage/v1/object/public/content";
+const GRAPH_VERSION = "v21.0";
 
-interface ContentPost {
+interface ContentRow {
+  id: string;
+  day: number;
+  publish_date: string | null;
   platforms: string[];
-  imageFile: string | null;
+  type: string; // 'image' | 'video' | 'text'
+  image_file: string | null;
+  video_file: string | null;
   caption: string;
+  published: boolean | null;
+  fb_post_id: string | null;
+  ig_post_id: string | null;
 }
 
-const CONTENT_QUEUE: Record<string, ContentPost> = {
-  "day2-taxi-image": {
-    platforms: ["facebook", "instagram"],
-    imageFile: "C2-02-Taxi.png",
-    caption: "Airport taxi in Bogota.\n\nTourists pay $40.\nLocals pay $8.\n\nSame ride. Different knowledge.\n\nFree Arrival Cheat Sheet: megusta.com.co\n\n#ColombiaTravel #VisitColombia #BogotaTravel #MeGustaColombia #NoDarPapaya #TravelScam #AirportTaxi #ColombiaGuide #SoloTravelColombia #TravelSafety",
-  },
-  "day3-taxi-story": {
-    platforms: ["facebook"],
-    imageFile: null,
-    caption: "It happens every single day at El Dorado airport.\n\nA tired traveler walks out of arrivals. A friendly guy says \"Taxi, amigo?\" and grabs their suitcase. Twenty minutes later, they're paying $40 for a ride that should cost $8.\n\nThe worst part? They don't even know they got scammed until a local tells them days later.\n\nThis is just ONE of 50+ situations we cover in the full 72-hour guide.\n\nFree Arrival Cheat Sheet: megusta.com.co",
-  },
-  "day4-phone-tip": {
-    platforms: ["facebook", "instagram"],
-    imageFile: "C4-04-Phone.png",
-    caption: "Lost your phone in Colombia?\n\nDon't panic. Walk into any high-end hotel.\nAsk the lobby to call you a taxi.\n\nDo NOT flag one on the street while distressed.\n\nMore emergency intel in the full survival guide.\n\nmegusta.com.co\n\n#ColombiaTravel #TravelSafety #EmergencyTips #MeGustaColombia #BogotaTravel #MedellinTravel #CartagenaTravel #SoloTravelColombia",
-  },
-  "day5-bogota-face": {
-    platforms: ["instagram"],
-    imageFile: "C1-03-Eyes.png",
-    caption: "The Bogota Face Protocol.\n\nRule 01: Eyes forward.\nNot scanning the ceiling. Not looking lost.\n\nBogota doesn't punish tourists for being foreign. It punishes them for being distracted.\n\nThis is from Chapter 1 of the Bogota Survival Vault.\n\nmegusta.com.co\n\n#BogotaTravel #ColombiaTravel #MeGustaColombia #NoDarPapaya #TravelTips #ColombiaGuide #SoloTravelColombia #DigitalNomadColombia",
-  },
-  "day6-reddit": {
-    platforms: ["facebook"],
-    imageFile: null,
-    caption: "Reddit has 200 threads from 2019 about traveling to Colombia.\n\nWe have 9 chapters of current, city-specific intel.\n\nThe difference: Reddit is a research project. This is a briefing.\n\nRead it on your phone on the plane. No app, no internet needed.\n\n$17 per city. $37 for the Explorer Bundle (3 cities, save 27%).\n\nmegusta.com.co",
-  },
-  "day8-frontseat": {
-    platforms: ["facebook", "instagram"],
-    imageFile: "C3-03-Script.png",
-    caption: "The Front Seat Script.\n\nIn Colombia, always sit in the front of the Uber.\n\nFist bump. Say \"Que mas, bien o que?\"\n\nSitting in back = \"I am a foreign client.\"\nSitting in front = \"I am a friend.\"\n\nmegusta.com.co\n\n#ColombiaTravel #MeGustaColombia #TravelHack #UberColombia #MedellinTravel #BogotaTravel #CartagenaTravel #NoDarPapaya #SoloTravelColombia",
-  },
-  "day10-gringo-food": {
-    platforms: ["facebook", "instagram"],
-    imageFile: "C2-03-Food.png",
-    caption: "Lunch in El Poblado, Medellin.\n\nTourist pays: $22\nLocal pays: $8\n\nSame quality. Different neighborhood.\n\nFree Arrival Cheat Sheet with real prices: megusta.com.co\n\n#MedellinTravel #ColombiaTravel #GringoPrices #MeGustaColombia #FoodColombia #TravelBudget #DigitalNomadColombia #ElPoblado #SoloTravelColombia",
-  },
-  "day13-robbed": {
-    platforms: ["facebook", "instagram"],
-    imageFile: "C4-03-Robbed.png",
-    caption: "If you are robbed in Colombia:\n\nDo not chase.\nDo not fight.\n\nAssets are replaceable.\nYou are not.\n\nFull emergency intel in every city guide.\n\nmegusta.com.co\n\n#ColombiaTravel #TravelSafety #EmergencyTips #MeGustaColombia #NoDarPapaya #SoloTravelColombia #BogotaTravel #MedellinTravel #CartagenaTravel",
-  },
-};
+type PlatformResult = { success: boolean; id?: string; error?: string };
 
-async function publishToFacebook(token: string, message: string, imageUrl?: string): Promise<{ id: string }> {
+function buildMediaUrl(row: ContentRow): string | undefined {
+  if (row.type === "image" && row.image_file) {
+    return `${STORAGE_BASE}/posts/${row.image_file}`;
+  }
+  if (row.type === "video" && row.video_file) {
+    return `${STORAGE_BASE}/reels/${row.video_file}`;
+  }
+  return undefined;
+}
+
+async function publishToFacebook(
+  token: string,
+  row: ContentRow,
+  mediaUrl: string | undefined
+): Promise<{ id: string }> {
   let url: string;
   let body: Record<string, string>;
-  if (imageUrl) {
-    url = `https://graph.facebook.com/v21.0/${PAGE_ID}/photos`;
-    body = { url: imageUrl, caption: message, access_token: token };
+
+  if (row.type === "image" && mediaUrl) {
+    url = `https://graph.facebook.com/${GRAPH_VERSION}/${PAGE_ID}/photos`;
+    body = { url: mediaUrl, caption: row.caption, access_token: token };
+  } else if (row.type === "video" && mediaUrl) {
+    url = `https://graph.facebook.com/${GRAPH_VERSION}/${PAGE_ID}/videos`;
+    body = { file_url: mediaUrl, description: row.caption, access_token: token };
   } else {
-    url = `https://graph.facebook.com/v21.0/${PAGE_ID}/feed`;
-    body = { message, access_token: token };
+    url = `https://graph.facebook.com/${GRAPH_VERSION}/${PAGE_ID}/feed`;
+    body = { message: row.caption, access_token: token };
   }
+
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -79,21 +67,69 @@ async function publishToFacebook(token: string, message: string, imageUrl?: stri
   return { id: data.id || data.post_id };
 }
 
-async function publishToInstagram(token: string, caption: string, imageUrl: string): Promise<{ id: string }> {
+async function pollIgContainerStatus(
+  containerId: string,
+  token: string,
+  maxAttempts = 24,
+  intervalMs = 5000
+): Promise<void> {
+  for (let i = 0; i < maxAttempts; i++) {
+    await new Promise((r) => setTimeout(r, intervalMs));
+    const res = await fetch(
+      `https://graph.facebook.com/${GRAPH_VERSION}/${containerId}?fields=status_code,status&access_token=${token}`
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(`IG status: ${data.error.message}`);
+    const code = data.status_code;
+    if (code === "FINISHED") return;
+    if (code === "ERROR" || code === "EXPIRED") {
+      throw new Error(`IG container ${code}: ${data.status || "unknown"}`);
+    }
+    // IN_PROGRESS or PUBLISHED — keep polling
+  }
+  throw new Error("IG container timed out (max 120s)");
+}
+
+async function publishToInstagram(
+  token: string,
+  row: ContentRow,
+  mediaUrl: string
+): Promise<{ id: string }> {
+  let containerBody: Record<string, string>;
+
+  if (row.type === "video") {
+    containerBody = {
+      media_type: "REELS",
+      video_url: mediaUrl,
+      caption: row.caption,
+      share_to_feed: "true",
+      access_token: token,
+    };
+  } else {
+    containerBody = {
+      image_url: mediaUrl,
+      caption: row.caption,
+      access_token: token,
+    };
+  }
+
   const containerRes = await fetch(
-    `https://graph.facebook.com/v21.0/${IG_ACCOUNT_ID}/media`,
+    `https://graph.facebook.com/${GRAPH_VERSION}/${IG_ACCOUNT_ID}/media`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image_url: imageUrl, caption, access_token: token }),
+      body: JSON.stringify(containerBody),
     }
   );
   const containerData = await containerRes.json();
   if (containerData.error) throw new Error(`IG container: ${containerData.error.message}`);
   const containerId = containerData.id;
-  await new Promise((r) => setTimeout(r, 5000));
+
+  // Poll for processing — required for Reels, harmless for images
+  await pollIgContainerStatus(containerId, token);
+
   const publishRes = await fetch(
-    `https://graph.facebook.com/v21.0/${IG_ACCOUNT_ID}/media_publish`,
+    `https://graph.facebook.com/${GRAPH_VERSION}/${IG_ACCOUNT_ID}/media_publish`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -118,55 +154,132 @@ Deno.serve(async (req: Request) => {
 
   try {
     const token = Deno.env.get("META_PAGE_TOKEN");
-    if (!token) {
-      return new Response(JSON.stringify({ error: "META_PAGE_TOKEN not configured" }), {
-        status: 500,
-        headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
-      });
-    }
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    const { postId } = await req.json();
-    if (!postId || !CONTENT_QUEUE[postId]) {
+    if (!token || !supabaseUrl || !serviceKey) {
       return new Response(
-        JSON.stringify({ error: `Unknown postId: ${postId}`, available: Object.keys(CONTENT_QUEUE) }),
-        { status: 400, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "Missing required secrets (META_PAGE_TOKEN / SUPABASE_*)" }),
+        { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
       );
     }
 
-    const post = CONTENT_QUEUE[postId];
-    const imageUrl = post.imageFile ? `${STORAGE_BASE}/${post.imageFile}` : undefined;
-    const results: Record<string, { success: boolean; id?: string; error?: string }> = {};
+    const supabase = createClient(supabaseUrl, serviceKey);
 
-    if (post.platforms.includes("facebook")) {
-      try {
-        const fb = await publishToFacebook(token, post.caption, imageUrl);
-        results.facebook = { success: true, id: fb.id };
-      } catch (err) {
-        results.facebook = { success: false, error: err.message };
+    // Parse body — support empty body for cron
+    let body: { postId?: string } = {};
+    try {
+      const text = await req.text();
+      if (text) body = JSON.parse(text);
+    } catch {
+      // ignore — treat as empty
+    }
+
+    // Fetch row: by id, or next unpublished
+    let row: ContentRow | null = null;
+    if (body.postId) {
+      const { data, error } = await supabase
+        .from("content_queue")
+        .select("*")
+        .eq("id", body.postId)
+        .maybeSingle();
+      if (error) throw new Error(`DB fetch: ${error.message}`);
+      row = data as ContentRow | null;
+      if (!row) {
+        return new Response(
+          JSON.stringify({ error: `Unknown postId: ${body.postId}` }),
+          { status: 404, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+        );
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("content_queue")
+        .select("*")
+        .eq("published", false)
+        .order("publish_date", { ascending: true, nullsFirst: false })
+        .order("day", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw new Error(`DB fetch: ${error.message}`);
+      row = data as ContentRow | null;
+      if (!row) {
+        return new Response(
+          JSON.stringify({ success: true, message: "Queue empty — nothing to publish" }),
+          { status: 200, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+        );
       }
     }
 
-    if (post.platforms.includes("instagram")) {
-      if (!imageUrl) {
-        results.instagram = { success: false, error: "Instagram requires an image" };
+    if (row.published) {
+      return new Response(
+        JSON.stringify({ success: true, skipped: true, postId: row.id, reason: "already published" }),
+        { status: 200, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+      );
+    }
+
+    const mediaUrl = buildMediaUrl(row);
+    const results: Record<string, PlatformResult> = {};
+
+    if (row.platforms.includes("facebook")) {
+      try {
+        const fb = await publishToFacebook(token, row, mediaUrl);
+        results.facebook = { success: true, id: fb.id };
+      } catch (err) {
+        results.facebook = { success: false, error: (err as Error).message };
+      }
+    }
+
+    if (row.platforms.includes("instagram")) {
+      if (!mediaUrl) {
+        results.instagram = { success: false, error: "Instagram requires image or video" };
       } else {
         try {
-          const ig = await publishToInstagram(token, post.caption, imageUrl);
+          const ig = await publishToInstagram(token, row, mediaUrl);
           results.instagram = { success: true, id: ig.id };
         } catch (err) {
-          results.instagram = { success: false, error: err.message };
+          results.instagram = { success: false, error: (err as Error).message };
         }
       }
     }
 
+    // Determine overall success: every requested platform must have succeeded
+    const requested = row.platforms.filter((p) => p === "facebook" || p === "instagram");
+    const allOk = requested.every((p) => results[p]?.success);
+
+    const fbId = results.facebook?.success ? results.facebook.id : null;
+    const igId = results.instagram?.success ? results.instagram.id : null;
+    const errorMsg = requested
+      .filter((p) => !results[p]?.success)
+      .map((p) => `${p}: ${results[p]?.error}`)
+      .join(" | ") || null;
+
+    const update: Record<string, unknown> = {};
+    if (fbId) update.fb_post_id = fbId;
+    if (igId) update.ig_post_id = igId;
+    if (allOk) {
+      update.published = true;
+      update.published_at = new Date().toISOString();
+      update.error = null;
+    } else if (errorMsg) {
+      update.error = errorMsg;
+    }
+
+    if (Object.keys(update).length > 0) {
+      const { error: updateErr } = await supabase
+        .from("content_queue")
+        .update(update)
+        .eq("id", row.id);
+      if (updateErr) console.error("DB update failed:", updateErr.message);
+    }
+
     return new Response(
-      JSON.stringify({ success: true, postId, results }),
+      JSON.stringify({ success: allOk, postId: row.id, results }),
       { status: 200, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
     );
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message || "Auto-publish failed" }), {
-      status: 500,
-      headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: (err as Error).message || "Auto-publish failed" }),
+      { status: 500, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } }
+    );
   }
 });
