@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      content_queue: {
+        Row: {
+          caption: string
+          created_at: string | null
+          day: number
+          error: string | null
+          fb_post_id: string | null
+          id: string
+          ig_post_id: string | null
+          image_file: string | null
+          platforms: string[]
+          publish_date: string | null
+          published: boolean | null
+          published_at: string | null
+          type: string
+          video_file: string | null
+        }
+        Insert: {
+          caption: string
+          created_at?: string | null
+          day: number
+          error?: string | null
+          fb_post_id?: string | null
+          id: string
+          ig_post_id?: string | null
+          image_file?: string | null
+          platforms: string[]
+          publish_date?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          type: string
+          video_file?: string | null
+        }
+        Update: {
+          caption?: string
+          created_at?: string | null
+          day?: number
+          error?: string | null
+          fb_post_id?: string | null
+          id?: string
+          ig_post_id?: string | null
+          image_file?: string | null
+          platforms?: string[]
+          publish_date?: string | null
+          published?: boolean | null
+          published_at?: string | null
+          type?: string
+          video_file?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
